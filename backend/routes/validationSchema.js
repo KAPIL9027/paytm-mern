@@ -12,5 +12,11 @@ import zod from 'zod';
     password: zod.string()
 })
 
+ const updateUserSchema = zod.object({
+    firstname: zod.string().optional(),
+    lastname: zod.string().optional(),
+    password: zod.string().optional()
+ })
+
 
 export {siginUserSchema, signupUserSchema}
