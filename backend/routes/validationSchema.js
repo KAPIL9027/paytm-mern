@@ -18,5 +18,10 @@ import zod from 'zod';
     password: zod.string().optional()
  })
 
+ const transferSchema = zod.object({
+   to: zod.string(),
+   amount: zod.number().min(1)
+ })
 
-export {siginUserSchema, signupUserSchema}
+
+export {siginUserSchema, signupUserSchema, updateUserSchema,transferSchema}

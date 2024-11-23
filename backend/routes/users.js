@@ -1,8 +1,9 @@
 import express from 'express'
 import jwt from 'jsonwebtoken'
-import { siginUserSchema, signupUserSchema } from "./validationSchema.js";
+import { siginUserSchema, signupUserSchema, updateUserSchema } from "./validationSchema.js";
 import User from '../models/User.js';
 import { authMiddleware } from '../middleware.js';
+import { Account } from '../models/Accounts.js';
 const userRouter = express.Router();
 
 userRouter.post('/signup',async (req,res)=>{
@@ -22,6 +23,10 @@ userRouter.post('/signup',async (req,res)=>{
     }
 
     const createUserResponse = await User.create(userData);
+    const AccountData = await Account.create({
+        userId: createUserResponse._id,
+        balance: (Math.random() * 10000 + 1)
+    })
     
     const jwtToken = jwt.sign({userId: createUserResponse._id},process.env.JWT_SECRET);
     
@@ -66,7 +71,38 @@ userRouter.put('/',authMiddleware,async(req,res)=>{
             message: "Invalid inputs"
     })
 
-    const updatedUser = User.findOneAndUpdate()
+    const updatedUser = await User.findOneAndUpdate({_id: req.userId},userData);
+    if(!updatedUser._id) return res.status(411).json({message: "Error while updating information!"});
+    res.json({message: "Updated successfully"});
+})
+
+userRouter.get('/bulk',authMiddleware,async(req,res)=>{
+    const filter = req.query.filter || "";
+    console.log(filter)
+    const users = await User.find({
+        $or: [{
+            firstname: {
+                "$regex": filter
+            }
+        },
+        {
+            lastname: {
+                "$regex": filter
+            }
+        }
+    ]
+    });
+
+    res.json({
+        users: users.map((user)=>{
+            return {
+                username: user.username,
+                firstname: user.firstname,
+                lastname: user.lastname,
+                _id: user._id
+            }
+        })
+    })
 })
 
 export default userRouter;

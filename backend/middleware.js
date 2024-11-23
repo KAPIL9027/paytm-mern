@@ -7,7 +7,7 @@ export const authMiddleware = (req,res,next)=> {
             message: "You are not authorized"
         })
     }
-    const token = headers.Authorization.split(" ")[1];
+    const token = authHeader.split(" ")[1];
     if(!token)
        return res.status(403).json({
         message: "You are not authorized"
