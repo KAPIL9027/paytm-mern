@@ -8,14 +8,16 @@ const userRouter = express.Router();
 
 userRouter.post('/signup',async (req,res)=>{
     const userData = req.body;
+    console.log(userData)
     const {success} = signupUserSchema.safeParse(userData);
-    
+    console.log(success);
     if(!success){
         return res.status(411).json({
             message: "Email already taken / Incorrect inputs"
         })
     }
     const existingUser = await User.findOne({username: userData.username});
+    console.log(existingUser);
     if(existingUser){
         return res.status(411).json({
             message: "Email already taken"
