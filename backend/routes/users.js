@@ -48,9 +48,9 @@ userRouter.post('/signin', async(req,res)=>{
             message: "Incorrect inputs"
         })
     }
-    const {_id: userId} = await User.findOne(userData);
-
-    if(userId){
+    const userDataResponse = await User.findOne(userData);
+    const userId = userDataResponse._id;
+    if(userDataResponse){
         const token = jwt.sign({userId},process.env.JWT_SECRET);
     if(!token){
         return res.status(411).json({

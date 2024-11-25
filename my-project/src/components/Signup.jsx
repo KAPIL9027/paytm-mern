@@ -1,4 +1,5 @@
 import {useState} from "react";
+import { useNavigate } from "react-router-dom";
 import Header from './Header.jsx'
 import InputBox from "./InputBox.jsx";
 import Button from './Button.jsx';
@@ -13,7 +14,13 @@ const Signup = () => {
   const [email,setEmail] = useState("");
   const [password,setPassword] = useState("");
   const [error,setError] = useState("");
-  const onSignup = async (e)=>{
+  const navigate  = useNavigate();
+
+  if(localStorage.getItem('userToken')) {
+    navigate('/dashboard')
+    return
+  }
+  const onSignup = async ()=>{
     if(!firstname || !lastname || !email || !password){
       setError("Invalid input credentials!");
       return
@@ -32,6 +39,10 @@ const Signup = () => {
     }
     const response = await fetch(`${REACT_APP_BACKEND_URL}/users/signup`,options);
     const responseData = await response.json();
+    if(!responseData){
+      setError("Oops something went wrong!")
+      return;
+    }
     if(!responseData.token){
       setError(responseData.message);
       return
@@ -39,12 +50,13 @@ const Signup = () => {
     else{
       setError("")
       localStorage.setItem("userToken",responseData.token);
+      navigate('/dashboard')
     }
     
     
   }
   return <div className="bg-slate-400 w-screen h-screen flex justify-center items-center">
-    <div className="flex flex-col gap-16 md:gap-0 md:justify-between w-full h-full bg-white p-3 md:w-96 md:rounded-sm md:h-3/4">
+    <div className="flex flex-col gap-16 md:gap-0 md:justify-between w-full h-full bg-white p-3 md:w-96 md:rounded-md md:h-fit">
       <Header title="Sign up" text="Enter your information to create an account"/>
       <div className="flex flex-col gap-2">
       <InputBox type={"text"} onChange={(e)=>{setFirstname(e.target.value)}} label={"First Name"} placeholder={"First Name"}/>
@@ -54,9 +66,9 @@ const Signup = () => {
       </div>
       <div className="flex flex-col gap-2">
       <Button onClick={onSignup} text="Sign up"/>
-      <RedirectionText text={"Login"} to={"/signin"}/>
+      <RedirectionText mainText={"Already have an account?"}text={"Login"} to={"/signin"}/>
       </div>
-      <div className="text-red-600">{error}</div>
+      <div className="text-red-600 text-center w-full">{error}</div>
     </div>
   </div>;
 };
