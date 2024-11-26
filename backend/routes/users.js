@@ -49,6 +49,7 @@ userRouter.post('/signin', async(req,res)=>{
         })
     }
     const userDataResponse = await User.findOne(userData);
+    if(!userDataResponse) return res.status(411).json({message: "Account does not exist"});
     const userId = userDataResponse._id;
     if(userDataResponse){
         const token = jwt.sign({userId},process.env.JWT_SECRET);
@@ -80,7 +81,6 @@ userRouter.put('/',authMiddleware,async(req,res)=>{
 
 userRouter.get('/bulk',authMiddleware,async(req,res)=>{
     const filter = req.query.filter || "";
-    console.log(filter)
     const users = await User.find({
         $or: [{
             firstname: {

@@ -15,8 +15,10 @@ accountRouter.get('/balance',authMiddleware,async(req,res)=>{
 })
 
 
-accountRouter.get('/transfer',authMiddleware,async(req,res)=>{
-    const transferData = req.body;
+accountRouter.post('/transfer',authMiddleware,async(req,res)=>{
+    let transferData = req.body;
+    if(transferData && transferData.amount)
+    transferData.amount = parseInt(transferData.amount);
     const {success} = transferSchema.safeParse(transferData);
     if(!success)
         return res.status(411).json({
@@ -46,8 +48,7 @@ accountRouter.get('/transfer',authMiddleware,async(req,res)=>{
             balance: transferData.amount
         }
     }).session(session);
-    session.commitTransaction();
-    session.endSession();
+    await session.commitTransaction();
     res.json({
         message: "Transfer successful"
     })

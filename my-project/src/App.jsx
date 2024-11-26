@@ -7,13 +7,14 @@ import SendMoney from './components/SendMoney'
 
 
 function App() {
+  
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<Signup/>} path="/signup"/>
         <Route element={<Signin/>} path="/signin"/>
         <Route element={<Dashboard/>} path="/dashboard"/>
-        <Route element={<SendMoney/>} path="/send"/>
+        <Route element={<SendMoney/>} path="/sendmoney"/>
       </Routes>
     </BrowserRouter>
     

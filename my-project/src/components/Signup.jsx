@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useState,useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 import Header from './Header.jsx'
 import InputBox from "./InputBox.jsx";
@@ -16,10 +16,12 @@ const Signup = () => {
   const [error,setError] = useState("");
   const navigate  = useNavigate();
 
-  if(localStorage.getItem('userToken')) {
-    navigate('/dashboard')
-    return
-  }
+  useEffect(()=>{
+    if(localStorage.getItem('userToken')) {
+      navigate('/dashboard')
+    }
+  })
+  
   const onSignup = async ()=>{
     if(!firstname || !lastname || !email || !password){
       setError("Invalid input credentials!");
@@ -55,8 +57,8 @@ const Signup = () => {
     
     
   }
-  return <div className="bg-slate-400 w-screen h-screen flex justify-center items-center">
-    <div className="flex flex-col gap-16 md:gap-0 md:justify-between w-full h-full bg-white p-3 md:w-96 md:rounded-md md:h-fit">
+  return <div className="flex items-center justify-center w-screen h-screen bg-slate-400">
+    <div className="flex flex-col w-full h-full gap-16 p-3 bg-white md:gap-0 md:justify-between md:w-96 md:rounded-md md:h-fit">
       <Header title="Sign up" text="Enter your information to create an account"/>
       <div className="flex flex-col gap-2">
       <InputBox type={"text"} onChange={(e)=>{setFirstname(e.target.value)}} label={"First Name"} placeholder={"First Name"}/>
@@ -68,7 +70,7 @@ const Signup = () => {
       <Button onClick={onSignup} text="Sign up"/>
       <RedirectionText mainText={"Already have an account?"}text={"Login"} to={"/signin"}/>
       </div>
-      <div className="text-red-600 text-center w-full">{error}</div>
+      <div className="w-full text-center text-red-600">{error}</div>
     </div>
   </div>;
 };
